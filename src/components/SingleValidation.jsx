@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { validatePhoneNumber } from '../api/validator';
 import { Phone, Search, Loader2, CircleAlert } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export default function SingleValidation({ apiKey, onCreditsUpdate }) {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -34,33 +38,34 @@ export default function SingleValidation({ apiKey, onCreditsUpdate }) {
   };
 
   return (
-    <div className="glass-panel">
-      <div className="flex items-center gap-3 mb-6">
-        <Phone className="text-primary" size={24} />
-        <h2 className="text-xl text-white">Single Number Check</h2>
+    <Card className="glass-panel border-emerald-500/20 p-6 flex flex-col gap-6">
+      <div className="flex items-center gap-3">
+        <Phone className="text-emerald-400" size={24} />
+        <CardTitle className="text-xl text-white">Single Number Check</CardTitle>
       </div>
 
-      <form onSubmit={handleValidate} className="flex gap-3 mb-6">
+      <form onSubmit={handleValidate} className="flex gap-3">
         <div className="relative flex-1">
-          <input
+          <Input
             type="text"
             placeholder="Enter phone number with country code (e.g., 14155551234)"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
             disabled={isLoading || !apiKey}
+            className="w-full bg-black/20 border-emerald-500/30 focus-visible:ring-emerald-500 text-white placeholder:text-slate-500"
           />
         </div>
-        <button
+        <Button
           type="submit"
-          className="btn btn-primary min-w-[120px]"
+          className="bg-emerald-500 hover:bg-emerald-600 text-white min-w-[120px]"
           disabled={isLoading || !apiKey || !phoneNumber}
         >
-          {isLoading ? <Loader2 className="animate-spin" size={20} /> : <><Search size={18} /> Check</>}
-        </button>
+          {isLoading ? <Loader2 className="animate-spin" size={20} /> : <><Search size={18} className="mr-2" /> Check</>}
+        </Button>
       </form>
 
       {!apiKey && (
-        <div className="text-sm text-yellow-400 bg-yellow-400/10 p-3 rounded flex items-center gap-2 mb-4">
+        <div className="text-sm text-yellow-200/70 bg-yellow-500/10 p-3 rounded-lg flex items-center gap-2 border border-yellow-500/20">
           <CircleAlert size={16} /> Please configure your API key first.
         </div>
       )}
@@ -74,26 +79,26 @@ export default function SingleValidation({ apiKey, onCreditsUpdate }) {
 
       {result && (
         <div className="bg-black/20 border border-white/5 rounded-lg p-6 animate-fade-in text-center">
-          <div className="text-sm text-gray-400 mb-2">Result for {result.phone_number}</div>
+          <div className="text-sm text-slate-400 mb-2">Result for {result.phone_number}</div>
 
-          <div className="mb-6 mt-4">
+          <div className="mb-2 mt-4">
             {result.status === 'valid' ? (
-              <div className="inline-flex items-center text-emerald-400 gap-2 mb-2 bg-emerald-400/10 px-4 py-2 rounded-full border border-emerald-400/20">
-                <span className="relative flex h-3 w-3">
+              <Badge className="inline-flex items-center gap-2 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border-emerald-500/30 px-4 py-1.5 text-sm uppercase tracking-wider">
+                <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                 </span>
-                <span className="text-xl font-bold uppercase tracking-wider text-emerald-300">Valid WhatsApp</span>
-              </div>
+                Valid WhatsApp
+              </Badge>
             ) : (
-              <div className="inline-flex items-center text-red-400 gap-2 mb-2 bg-red-400/10 px-4 py-2 rounded-full border border-red-400/20">
-                <span className="h-3 w-3 rounded-full bg-red-500"></span>
-                <span className="text-xl font-bold uppercase tracking-wider text-red-300">Invalid Number</span>
-              </div>
+              <Badge variant="destructive" className="inline-flex items-center gap-2 border-red-500/40 px-4 py-1.5 text-sm uppercase tracking-wider">
+                <span className="h-2 w-2 rounded-full bg-red-200"></span>
+                Invalid WhatsApp Number
+              </Badge>
             )}
           </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

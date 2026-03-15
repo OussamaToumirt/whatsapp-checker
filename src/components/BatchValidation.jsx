@@ -2,6 +2,18 @@ import React, { useState, useRef } from 'react';
 import Papa from 'papaparse';
 import { validatePhoneNumber } from '../api/validator';
 import { CloudUpload, Sheet, Loader2, Download, TriangleAlert, Users } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Card, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export default function BatchValidation({ apiKey, onCreditsUpdate }) {
   const [file, setFile] = useState(null);
@@ -136,21 +148,21 @@ export default function BatchValidation({ apiKey, onCreditsUpdate }) {
   };
 
   return (
-    <div className="glass-panel">
-      <div className="flex items-center gap-3 mb-6">
-        <Users className="text-primary" size={24} />
-        <h2 className="text-xl text-white">Bulk Validator (CSV)</h2>
+    <Card className="glass-panel border-emerald-500/20 p-6 flex flex-col gap-6">
+      <div className="flex items-center gap-3">
+        <Users className="text-emerald-400" size={24} />
+        <CardTitle className="text-xl text-white">Bulk Validator (CSV)</CardTitle>
       </div>
 
       {!apiKey && (
-        <div className="text-sm text-yellow-400 bg-yellow-400/10 p-3 rounded flex items-center gap-2 mb-6">
+        <div className="text-sm text-yellow-200/70 bg-yellow-500/10 p-3 rounded-lg flex items-center gap-2 border border-yellow-500/20">
           <TriangleAlert size={16} /> Please configure your API key first.
         </div>
       )}
 
       {numbers.length === 0 && (
         <div
-          className={`drop-zone ${!apiKey ? 'opacity-50 pointer-events-none' : ''}`}
+          className={`drop-zone border-dashed border-2 border-emerald-500/30 rounded-xl p-12 text-center transition-all cursor-pointer bg-black/10 hover:bg-emerald-500/5 hover:border-emerald-400 ${!apiKey ? 'opacity-50 pointer-events-none' : ''}`}
           onClick={() => apiKey && fileInputRef.current?.click()}
         >
           <input
@@ -161,13 +173,13 @@ export default function BatchValidation({ apiKey, onCreditsUpdate }) {
             className="hidden"
           />
           <CloudUpload size={48} className="mx-auto mb-4 text-emerald-400/50" />
-          <h3 className="text-lg text-white mb-2">Upload CSV File</h3>
-          <p className="text-sm px-8">Drag and drop or click to select.<br />Maximum 1000 numbers allowed.</p>
+          <h3 className="text-lg text-white mb-2 font-medium">Upload CSV File</h3>
+          <p className="text-sm text-slate-400">Drag and drop or click to select.<br />Maximum 1000 numbers allowed.</p>
         </div>
       )}
 
       {error && (
-        <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-lg mt-4 flex items-start gap-3">
+        <div className="bg-red-500/10 border border-red-500/20 text-red-400 p-4 rounded-lg flex items-start gap-3">
           <TriangleAlert size={20} className="shrink-0 mt-0.5" />
           <p>{error}</p>
         </div>
@@ -176,93 +188,91 @@ export default function BatchValidation({ apiKey, onCreditsUpdate }) {
       {numbers.length > 0 && results.length === 0 && !isProcessing && (
         <div className="bg-black/20 p-6 rounded-lg border border-white/5 animate-fade-in">
           <div className="flex items-center gap-4 mb-6">
-            <div className="bg-primary/20 p-3 rounded-full">
-              <Sheet className="text-primary" size={24} />
+            <div className="bg-emerald-500/20 p-3 rounded-full">
+              <Sheet className="text-emerald-400" size={24} />
             </div>
             <div>
-              <h3 className="text-lg text-white font-medium">{file?.name}</h3>
-              <p className="text-sm">{numbers.length} numbers detected ready for validation.</p>
+              <h3 className="text-lg text-white font-medium mb-1">{file?.name}</h3>
+              <p className="text-sm text-slate-400">{numbers.length} numbers detected ready for validation.</p>
             </div>
           </div>
 
           <div className="flex gap-4">
-            <button className="btn btn-primary flex-1" onClick={processBatch}>
+            <Button className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white" onClick={processBatch}>
               Start Validating {numbers.length} Numbers
-            </button>
-            <button className="btn btn-outline" onClick={reset}>Cancel</button>
+            </Button>
+            <Button variant="outline" className="border-emerald-500/30 text-white hover:bg-emerald-500/10" onClick={reset}>Cancel</Button>
           </div>
         </div>
       )}
 
       {(isProcessing || results.length > 0) && (
-        <div className="animate-fade-in">
-          <div className="flex justify-between items-end mb-4">
+        <div className="animate-fade-in flex flex-col gap-6">
+          <div className="flex justify-between items-end">
             <div>
-              <h3 className="text-lg font-medium text-white">Processing Results</h3>
-              <p className="text-sm">
+              <h3 className="text-lg font-medium text-white mb-1">Processing Results</h3>
+              <p className="text-sm text-slate-400">
                 Validated {results.length} of {numbers.length}
               </p>
             </div>
             <div className="flex gap-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-emerald-400">{stats.valid}</div>
-                <div className="text-xs text-gray-400 uppercase tracking-wider">Valid</div>
+                <div className="text-xs text-slate-400 uppercase tracking-wider">Valid</div>
               </div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-red-400">{stats.invalid}</div>
-                <div className="text-xs text-gray-400 uppercase tracking-wider">Invalid</div>
+                <div className="text-xs text-slate-400 uppercase tracking-wider">Invalid</div>
               </div>
             </div>
           </div>
 
-          <div className="w-full bg-gray-800 rounded-full h-2.5 mb-6 overflow-hidden border border-white/5">
-            <div className="bg-gradient-to-r from-emerald-500 to-emerald-400 h-2.5 rounded-full transition-all duration-300" style={{ width: `${progress}%` }}></div>
-          </div>
+          <Progress value={progress} className="h-2.5 bg-gray-800 border border-white/5 [&>div]:bg-gradient-to-r [&>div]:from-emerald-500 [&>div]:to-emerald-400" />
 
           {!isProcessing && results.length > 0 && (
-            <div className="flex gap-4 mb-6">
-              <button className="btn btn-primary flex-1" onClick={downloadResults}>
-                <Download size={18} /> Export Results to CSV
-              </button>
-              <button className="btn btn-outline" onClick={reset}>New Batch</button>
+            <div className="flex gap-4">
+              <Button className="flex-1 bg-emerald-500 hover:bg-emerald-600 text-white" onClick={downloadResults}>
+                <Download size={18} className="mr-2" /> Export Results to CSV
+              </Button>
+              <Button variant="outline" className="border-emerald-500/30 text-white hover:bg-emerald-500/10" onClick={reset}>New Batch</Button>
             </div>
           )}
 
-          <div className="table-container max-h-[400px] overflow-y-auto">
-            <table>
-              <thead className="sticky top-0 bg-[#0f172a] shadow-lg">
-                <tr>
-                  <th>Phone Number</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
+          <div className="rounded-md border border-white/10 bg-black/20 max-h-[400px] overflow-y-auto">
+            <Table>
+              <TableHeader className="sticky top-0 bg-[#0f172a] shadow-lg">
+                <TableRow className="border-white/10 hover:bg-transparent">
+                  <TableHead className="text-slate-400">Phone Number</TableHead>
+                  <TableHead className="text-slate-400">Status</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {results.map((result, idx) => (
-                  <tr key={idx}>
-                    <td className="font-mono text-sm">{result.phone_number}</td>
-                    <td>
+                  <TableRow key={idx} className="border-white/5 hover:bg-white/5">
+                    <TableCell className="font-mono text-sm text-slate-300">{result.phone_number}</TableCell>
+                    <TableCell>
                       {result.status === 'valid' ? (
-                        <span className="badge badge-valid">Valid</span>
+                        <Badge className="bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-400 border-emerald-500/30">Valid</Badge>
                       ) : result.status === 'invalid' ? (
-                        <span className="badge badge-invalid">Invalid</span>
+                        <Badge variant="destructive" className="border-red-500/40">Invalid</Badge>
                       ) : (
-                        <span className="badge bg-red-500/20 text-red-300">Error: {result.error}</span>
+                        <Badge variant="outline" className="bg-red-500/10 text-red-300 border-red-500/30">Error: {result.error}</Badge>
                       )}
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
                 {isProcessing && (
-                  <tr>
-                    <td colSpan="2" className="text-center py-4 text-gray-400">
+                  <TableRow className="border-none hover:bg-transparent">
+                    <TableCell colSpan={2} className="text-center py-8 text-slate-400">
                       <Loader2 className="animate-spin inline mr-2" size={16} /> Validating...
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 )}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </div>
       )}
-    </div>
+    </Card>
   );
 }

@@ -1,6 +1,6 @@
 export const validatePhoneNumber = async (apiKey, phoneNumber) => {
   try {
-    const response = await fetch('https://wavalidator.com/api/v1/validate/', {
+    const response = await fetch('/api/v1/validate/', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiKey}`,

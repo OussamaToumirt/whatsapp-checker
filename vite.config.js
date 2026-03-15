@@ -14,4 +14,13 @@ export default defineConfig({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://wavalidator.com',
+        changeOrigin: true,
+        secure: false, // In case of SSL warnings when proxying to HTTPS
+      }
+    }
+  }
 })

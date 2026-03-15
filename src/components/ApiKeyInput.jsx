@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { KeyRound, CircleCheck, ChevronRight, CircleHelp } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardTitle } from "@/components/ui/card";
 
 export default function ApiKeyInput({ onKeySave, savedKey }) {
   const [apiKey, setApiKey] = useState(savedKey || '');
@@ -22,55 +25,56 @@ export default function ApiKeyInput({ onKeySave, savedKey }) {
 
   if (!isEditing) {
     return (
-      <div className="glass-panel flex items-center justify-between mb-8">
+      <Card className="glass-panel flex items-center justify-between mb-8 p-6 flex-row border-emerald-500/20">
         <div className="flex items-center gap-4">
           <div className="bg-emerald-500/20 p-3 rounded-full">
             <CircleCheck className="text-emerald-400" size={24} />
           </div>
           <div>
-            <h3 className="text-lg text-white mb-1">API Key Configured</h3>
-            <p className="text-sm">Your WAValidator API Key is securely stored in your browser.</p>
+            <CardTitle className="text-lg text-white mb-1">API Key Configured</CardTitle>
+            <p className="text-sm text-slate-300">Your WAValidator API Key is securely stored in your browser.</p>
           </div>
         </div>
-        <button
+        <Button
+          variant="outline"
           onClick={() => setIsEditing(true)}
-          className="btn btn-outline text-sm"
+          className="bg-transparent border-emerald-500/30 text-white hover:bg-emerald-500/10 hover:text-white"
         >
           Update Key
-        </button>
-      </div>
+        </Button>
+      </Card>
     );
   }
 
   return (
-    <div className="glass-panel mb-8 border-emerald-500/30">
-      <div className="flex items-center gap-3 mb-4">
+    <Card className="glass-panel mb-8 border-emerald-500/30 p-6 flex flex-col gap-6">
+      <div className="flex items-center gap-3">
         <KeyRound className="text-emerald-400" size={24} />
-        <h2 className="text-xl text-white">WAValidator API Key Settings</h2>
+        <CardTitle className="text-xl text-white">WAValidator API Key Settings</CardTitle>
       </div>
 
-      <p className="mb-6">
+      <p className="text-slate-300 text-sm">
         To use this tool, you need an API key from WAValidator.
         Your key is stored locally and never sent anywhere except directly to the validation API.
       </p>
 
       <form onSubmit={handleSave} className="flex flex-col gap-4">
         <div className="flex gap-4">
-          <input
+          <Input
             type="password"
             placeholder="Enter your WAValidator API Key (e.g., wav_...)"
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
             required
-            className="flex-1"
+            className="flex-1 bg-black/20 border-emerald-500/30 focus-visible:ring-emerald-500 text-white placeholder:text-slate-500"
           />
-          <button type="submit" className="btn btn-primary whitespace-nowrap">
-            Save Key <ChevronRight size={18} />
-          </button>
+          <Button type="submit" className="bg-emerald-500 hover:bg-emerald-600 text-white whitespace-nowrap">
+            Save Key <ChevronRight size={18} className="ml-1" />
+          </Button>
         </div>
       </form>
 
-      <div className="mt-6 flex items-start gap-2 text-sm text-yellow-200/70 bg-yellow-500/10 p-4 rounded-lg border border-yellow-500/20">
+      <div className="flex items-start gap-2 text-sm text-yellow-200/70 bg-yellow-500/10 p-4 rounded-lg border border-yellow-500/20">
         <CircleHelp size={18} className="shrink-0 mt-0.5" />
         <div>
           Don't have an API key or ran out of credits?
@@ -79,6 +83,6 @@ export default function ApiKeyInput({ onKeySave, savedKey }) {
           </a>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

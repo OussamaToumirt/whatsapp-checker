@@ -3,6 +3,7 @@ import ApiKeyInput from './components/ApiKeyInput';
 import SingleValidation from './components/SingleValidation';
 import BatchValidation from './components/BatchValidation';
 import { ShieldCheck, MessageCircle, Github } from 'lucide-react';
+import { Badge } from "@/components/ui/badge";
 
 function App() {
   const [apiKey, setApiKey] = useState('');
@@ -19,7 +20,7 @@ function App() {
   };
 
   return (
-    <div className="container relative z-10">
+    <div className="container relative z-10 mt-10">
       <header className="flex items-center justify-between mb-12 flex-wrap gap-4">
         <div className="flex items-center gap-3">
           <div className="bg-emerald-500 rounded-xl p-3 shadow-lg shadow-emerald-500/20">
@@ -32,24 +33,23 @@ function App() {
         </div>
 
         {credits !== null && (
-          <div className="glass-panel py-2 px-4 shadow-none flex items-center gap-2 border-emerald-500/30 bg-emerald-500/10">
+          <Badge variant="outline" className="py-2 px-4 flex items-center gap-2 border-emerald-500/30 bg-emerald-500/10 shadow-none text-emerald-300 text-sm font-medium hover:bg-emerald-500/20 rounded-full">
             <ShieldCheck className="text-emerald-400" size={20} />
-            <span className="text-sm font-medium text-emerald-300">Credits Remaining: {credits}</span>
-          </div>
+            Credits Remaining: {credits}
+          </Badge>
         )}
       </header>
 
       <main>
         <ApiKeyInput onKeySave={handleKeySave} savedKey={apiKey} />
 
-        <div className="grid grid-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <SingleValidation apiKey={apiKey} onCreditsUpdate={setCredits} />
           <BatchValidation apiKey={apiKey} onCreditsUpdate={setCredits} />
         </div>
       </main>
 
       <footer className="mt-20 border-t border-white/10 pt-8 pb-4 text-center">
-        <p className="text-sm mb-2">Developed with modern React + Vite</p>
         <p className="text-xs text-gray-500 mt-4">
           This tool connects to the <a href="https://wavalidator.com" target="_blank" rel="noopener noreferrer" className="text-emerald-500 hover:text-emerald-400">wavalidator.com</a> API. Make sure your API key has sufficient credits.
         </p>
