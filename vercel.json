@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://wavalidator.com/api/$1"
+    }
+  ]
+}
