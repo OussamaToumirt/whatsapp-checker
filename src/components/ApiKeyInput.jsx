@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { KeyRound, CircleCheck, ChevronRight, CircleHelp } from 'lucide-react';
+import { KeyRound, CircleCheck, ChevronRight, CircleHelp, CircleAlert, Loader2 } from 'lucide-react';
+import { checkApiKey } from '../api/validator';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardTitle } from "@/components/ui/card";
@@ -7,6 +8,8 @@ import { Card, CardTitle } from "@/components/ui/card";
 export default function ApiKeyInput({ onKeySave, savedKey }) {
   const [apiKey, setApiKey] = useState(savedKey || '');
   const [isEditing, setIsEditing] = useState(!savedKey);
+  const [isConfiguring, setIsConfiguring] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     if (savedKey) {
@@ -15,11 +18,26 @@ export default function ApiKeyInput({ onKeySave, savedKey }) {
     }
   }, [savedKey]);
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
-    if (apiKey.trim()) {
-      onKeySave(apiKey.trim());
-      setIsEditing(false);
+    if (!apiKey.trim()) return;
+
+    setIsConfiguring(true);
+    setError('');
+
+    try {
+      const isValid = await checkApiKey(apiKey.trim());
+      
+      if (isValid) {
+        onKeySave(apiKey.trim());
+        setIsEditing(false);
+      } else {
+        setError('Invalid API Key. Please verify your key on wavalidator.com.');
+      }
+    } catch (err) {
+      setError(err.message || 'Failed to verify API key. Please try again.');
+    } finally {
+      setIsConfiguring(false);
     }
   };
 
@@ -66,12 +84,20 @@ export default function ApiKeyInput({ onKeySave, savedKey }) {
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
             required
-            className="flex-1 bg-black/20 border-emerald-500/30 focus-visible:ring-emerald-500 text-white placeholder:text-slate-500"
+            disabled={isConfiguring}
+            className="flex-1 bg-black/20 border-emerald-500/30 focus-visible:ring-emerald-500 text-white placeholder:text-slate-500 disabled:opacity-50"
           />
-          <Button type="submit" className="bg-emerald-500 hover:bg-emerald-600 text-white whitespace-nowrap">
-            Save Key <ChevronRight size={18} className="ml-1" />
+          <Button type="submit" disabled={isConfiguring || !apiKey.trim()} className="bg-emerald-500 hover:bg-emerald-600 text-white whitespace-nowrap min-w-[120px]">
+             {isConfiguring ? <Loader2 className="animate-spin" size={18} /> : <>Save Key <ChevronRight size={18} className="ml-1" /></>}
           </Button>
         </div>
+        
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-md flex items-center gap-3 animate-fade-in text-sm mt-1">
+            <CircleAlert size={16} className="shrink-0" />
+            <p>{error}</p>
+          </div>
+        )}
       </form>
 
       <div className="flex items-start gap-2 text-sm text-yellow-200/70 bg-yellow-500/10 p-4 rounded-lg border border-yellow-500/20">
